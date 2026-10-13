@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: wifi-admin
+server:
+  port: ${SERVER_PORT:8081}
+platform:
+  soap-url: ${PLATFORM_SOAP_URL:http://localhost:8082/platform}

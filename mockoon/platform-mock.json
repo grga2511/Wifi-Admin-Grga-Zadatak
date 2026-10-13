@@ -1,0 +1,165 @@
+{
+  "uuid": "a1111111-1111-1111-1111-111111111111",
+  "lastMigration": 33,
+  "name": "WiFi platform SOAP mock",
+  "endpointPrefix": "",
+  "latency": 0,
+  "port": 3000,
+  "hostname": "",
+  "cors": true,
+  "headers": [
+    {
+      "uuid": "b0000000-0000-0000-0000-000000000001",
+      "key": "",
+      "value": ""
+    }
+  ],
+  "proxyMode": false,
+  "proxyHost": "",
+  "proxyRemovePrefix": false,
+  "proxyReqHeaders": [
+    {
+      "uuid": "b0000000-0000-0000-0000-000000000002",
+      "key": "",
+      "value": ""
+    }
+  ],
+  "proxyResHeaders": [
+    {
+      "uuid": "b0000000-0000-0000-0000-000000000003",
+      "key": "",
+      "value": ""
+    }
+  ],
+  "tlsOptions": {
+    "enabled": false,
+    "type": "CERT",
+    "pfxPath": "",
+    "certPath": "",
+    "keyPath": "",
+    "caPath": "",
+    "passphrase": ""
+  },
+  "data": [
+    {
+      "uuid": "a2222222-2222-2222-2222-222222222222",
+      "id": "wifiDb",
+      "name": "wifiDb",
+      "documentation": "Seed CPE map byId; runtime merges are in-memory only.",
+      "value": "{\n  \"byId\": {\n    \"CPE_001\": {\n      \"cpeId\": \"CPE_001\",\n      \"wifiBand\": \"BAND_2_4_GHZ\",\n      \"ssid\": \"Office-2G\",\n      \"encryptionType\": \"WPA2_PSK\",\n      \"password\": \"seed-wifi-01\"\n    },\n    \"CPE_002\": {\n      \"cpeId\": \"CPE_002\",\n      \"wifiBand\": \"BAND_5_GHZ\",\n      \"ssid\": \"Office-5G\",\n      \"encryptionType\": \"WPA2_PSK\",\n      \"password\": \"seed-wifi-02\"\n    },\n    \"CPE_003\": {\n      \"cpeId\": \"CPE_003\",\n      \"wifiBand\": \"BAND_2_4_GHZ\",\n      \"ssid\": \"Guest-2G\",\n      \"encryptionType\": \"OPEN\"\n    },\n    \"CPE_004\": {\n      \"cpeId\": \"CPE_004\",\n      \"wifiBand\": \"BAND_5_GHZ\",\n      \"ssid\": \"Guest-5G\",\n      \"encryptionType\": \"WPA3_SAE\",\n      \"password\": \"seed-wifi-04\"\n    },\n    \"CPE_005\": {\n      \"cpeId\": \"CPE_005\",\n      \"wifiBand\": \"BAND_2_4_GHZ\",\n      \"ssid\": \"Lab-Net\",\n      \"encryptionType\": \"WPA_PSK\",\n      \"password\": \"seed-wifi-05\"\n    },\n    \"CPE_006\": {\n      \"cpeId\": \"CPE_006\",\n      \"wifiBand\": \"BAND_5_GHZ\",\n      \"ssid\": \"Lab-Net-5\",\n      \"encryptionType\": \"WPA2_ENTERPRISE\",\n      \"password\": \"seed-wifi-06\"\n    },\n    \"CPE_007\": {\n      \"cpeId\": \"CPE_007\",\n      \"wifiBand\": \"BAND_2_4_GHZ\",\n      \"ssid\": \"Home-IoT\",\n      \"encryptionType\": \"WPA2_PSK\",\n      \"password\": \"seed-wifi-07\"\n    },\n    \"CPE_008\": {\n      \"cpeId\": \"CPE_008\",\n      \"wifiBand\": \"BAND_5_GHZ\",\n      \"ssid\": \"Home-Main\",\n      \"encryptionType\": \"WPA2_PSK\",\n      \"password\": \"seed-wifi-08\"\n    },\n    \"CPE_009\": {\n      \"cpeId\": \"CPE_009\",\n      \"wifiBand\": \"BAND_2_4_GHZ\",\n      \"ssid\": \"Shop-Floor\",\n      \"encryptionType\": \"WEP\",\n      \"password\": \"seed-wifi-09\"\n    },\n    \"CPE_010\": {\n      \"cpeId\": \"CPE_010\",\n      \"wifiBand\": \"BAND_5_GHZ\",\n      \"ssid\": \"Shop-Office\",\n      \"encryptionType\": \"WPA2_PSK\",\n      \"password\": \"seed-wifi-10\"\n    },\n    \"CPE_011\": {\n      \"cpeId\": \"CPE_011\",\n      \"wifiBand\": \"BAND_2_4_GHZ\",\n      \"ssid\": \"Demo-Open\",\n      \"encryptionType\": \"OPEN\"\n    },\n    \"CPE_012\": {\n      \"cpeId\": \"CPE_012\",\n      \"wifiBand\": \"BAND_5_GHZ\",\n      \"ssid\": \"Demo-Secure\",\n      \"encryptionType\": \"WPA3_SAE\",\n      \"password\": \"seed-wifi-12\"\n    }\n  }\n}"
+    }
+  ],
+  "folders": [],
+  "callbacks": [],
+  "routes": [
+    {
+      "uuid": "a3333333-3333-3333-3333-333333333333",
+      "type": "http",
+      "documentation": "SOAP 1.1 endpoint; route by SOAPAction header",
+      "method": "post",
+      "endpoint": "platform",
+      "responses": [
+        {
+          "uuid": "a4444444-4444-4444-4444-444444444444",
+          "body": "{{#if (includes (stringify (bodyRaw)) 'soapenv:Envelope')}}\n{{#with (dataRaw 'wifiDb' (concat 'byId.' (body 'soapenv:Envelope.soapenv:Body.v1:GetCpeIdRequest.v1:cpeId._text')))}}\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tns=\"http://wifi-admin.local/platform/v1\">\n  <soap:Body>\n    <tns:GetCpeIdResponse>\n      <tns:configuration>\n        <tns:cpeId>{{cpeId}}</tns:cpeId>\n        <tns:wifiBand>{{wifiBand}}</tns:wifiBand>\n        <tns:ssid>{{ssid}}</tns:ssid>\n        {{#if encryptionType}}<tns:encryptionType>{{encryptionType}}</tns:encryptionType>{{/if}}\n        {{#if password}}<tns:password>{{password}}</tns:password>{{/if}}\n      </tns:configuration>\n    </tns:GetCpeIdResponse>\n  </soap:Body>\n</soap:Envelope>\n{{else}}\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <soap:Fault>\n      <faultcode>tns:NotFound</faultcode>\n      <faultstring>CPE not found</faultstring>\n    </soap:Fault>\n  </soap:Body>\n</soap:Envelope>\n{{/with}}\n{{else}}\n{{#with (dataRaw 'wifiDb' (concat 'byId.' (body 'soap:Envelope.soap:Body.tns:GetCpeIdRequest.tns:cpeId._text')))}}\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tns=\"http://wifi-admin.local/platform/v1\">\n  <soap:Body>\n    <tns:GetCpeIdResponse>\n      <tns:configuration>\n        <tns:cpeId>{{cpeId}}</tns:cpeId>\n        <tns:wifiBand>{{wifiBand}}</tns:wifiBand>\n        <tns:ssid>{{ssid}}</tns:ssid>\n        {{#if encryptionType}}<tns:encryptionType>{{encryptionType}}</tns:encryptionType>{{/if}}\n        {{#if password}}<tns:password>{{password}}</tns:password>{{/if}}\n      </tns:configuration>\n    </tns:GetCpeIdResponse>\n  </soap:Body>\n</soap:Envelope>\n{{else}}\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <soap:Fault>\n      <faultcode>tns:NotFound</faultcode>\n      <faultstring>CPE not found</faultstring>\n    </soap:Fault>\n  </soap:Body>\n</soap:Envelope>\n{{/with}}\n{{/if}}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "getCpeID",
+          "headers": [
+            {
+              "uuid": "b1111111-1111-1111-1111-111111111111",
+              "key": "Content-Type",
+              "value": "text/xml; charset=utf-8"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "SOAPAction",
+              "operator": "regex",
+              "invert": false,
+              "value": "getCpeID"
+            }
+          ],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "a5555555-5555-5555-5555-555555555555",
+          "body": "{{#if (includes (stringify (bodyRaw)) 'soapenv:Envelope')}}\n{{#if (dataRaw 'wifiDb' (concat 'byId.' (body 'soapenv:Envelope.soapenv:Body.v1:UpdateCpeIdRequest.v1:configuration.v1:cpeId._text')))}}{{setData 'merge' 'wifiDb' (concat 'byId.' (body 'soapenv:Envelope.soapenv:Body.v1:UpdateCpeIdRequest.v1:configuration.v1:cpeId._text')) (object cpeId=(body 'soapenv:Envelope.soapenv:Body.v1:UpdateCpeIdRequest.v1:configuration.v1:cpeId._text') wifiBand=(body 'soapenv:Envelope.soapenv:Body.v1:UpdateCpeIdRequest.v1:configuration.v1:wifiBand._text') ssid=(body 'soapenv:Envelope.soapenv:Body.v1:UpdateCpeIdRequest.v1:configuration.v1:ssid._text') encryptionType=(body 'soapenv:Envelope.soapenv:Body.v1:UpdateCpeIdRequest.v1:configuration.v1:encryptionType._text' '') password=(body 'soapenv:Envelope.soapenv:Body.v1:UpdateCpeIdRequest.v1:configuration.v1:password._text' ''))}}\n{{#with (dataRaw 'wifiDb' (concat 'byId.' (body 'soapenv:Envelope.soapenv:Body.v1:UpdateCpeIdRequest.v1:configuration.v1:cpeId._text')))}}\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tns=\"http://wifi-admin.local/platform/v1\">\n  <soap:Body>\n    <tns:UpdateCpeIdResponse>\n      <tns:configuration>\n        <tns:cpeId>{{cpeId}}</tns:cpeId>\n        <tns:wifiBand>{{wifiBand}}</tns:wifiBand>\n        <tns:ssid>{{ssid}}</tns:ssid>\n        {{#if encryptionType}}<tns:encryptionType>{{encryptionType}}</tns:encryptionType>{{/if}}\n        {{#if password}}<tns:password>{{password}}</tns:password>{{/if}}\n      </tns:configuration>\n    </tns:UpdateCpeIdResponse>\n  </soap:Body>\n</soap:Envelope>\n{{/with}}\n{{else}}\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <soap:Fault>\n      <faultcode>tns:NotFound</faultcode>\n      <faultstring>CPE not found for update</faultstring>\n    </soap:Fault>\n  </soap:Body>\n</soap:Envelope>\n{{/if}}\n{{else}}\n{{#if (dataRaw 'wifiDb' (concat 'byId.' (body 'soap:Envelope.soap:Body.tns:UpdateCpeIdRequest.tns:configuration.tns:cpeId._text')))}}{{setData 'merge' 'wifiDb' (concat 'byId.' (body 'soap:Envelope.soap:Body.tns:UpdateCpeIdRequest.tns:configuration.tns:cpeId._text')) (object cpeId=(body 'soap:Envelope.soap:Body.tns:UpdateCpeIdRequest.tns:configuration.tns:cpeId._text') wifiBand=(body 'soap:Envelope.soap:Body.tns:UpdateCpeIdRequest.tns:configuration.tns:wifiBand._text') ssid=(body 'soap:Envelope.soap:Body.tns:UpdateCpeIdRequest.tns:configuration.tns:ssid._text') encryptionType=(body 'soap:Envelope.soap:Body.tns:UpdateCpeIdRequest.tns:configuration.tns:encryptionType._text' '') password=(body 'soap:Envelope.soap:Body.tns:UpdateCpeIdRequest.tns:configuration.tns:password._text' ''))}}\n{{#with (dataRaw 'wifiDb' (concat 'byId.' (body 'soap:Envelope.soap:Body.tns:UpdateCpeIdRequest.tns:configuration.tns:cpeId._text')))}}\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tns=\"http://wifi-admin.local/platform/v1\">\n  <soap:Body>\n    <tns:UpdateCpeIdResponse>\n      <tns:configuration>\n        <tns:cpeId>{{cpeId}}</tns:cpeId>\n        <tns:wifiBand>{{wifiBand}}</tns:wifiBand>\n        <tns:ssid>{{ssid}}</tns:ssid>\n        {{#if encryptionType}}<tns:encryptionType>{{encryptionType}}</tns:encryptionType>{{/if}}\n        {{#if password}}<tns:password>{{password}}</tns:password>{{/if}}\n      </tns:configuration>\n    </tns:UpdateCpeIdResponse>\n  </soap:Body>\n</soap:Envelope>\n{{/with}}\n{{else}}\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <soap:Fault>\n      <faultcode>tns:NotFound</faultcode>\n      <faultstring>CPE not found for update</faultstring>\n    </soap:Fault>\n  </soap:Body>\n</soap:Envelope>\n{{/if}}\n{{/if}}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "updateCpeId",
+          "headers": [
+            {
+              "uuid": "b1111111-1111-1111-1111-111111111111",
+              "key": "Content-Type",
+              "value": "text/xml; charset=utf-8"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "SOAPAction",
+              "operator": "regex",
+              "invert": false,
+              "value": "updateCpeId"
+            }
+          ],
+          "rulesOperator": "OR",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "a6666666-6666-6666-6666-666666666666",
+          "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n  <soap:Body>\n    <soap:Fault>\n      <faultcode>soap:Client</faultcode>\n      <faultstring>Unknown SOAPAction or CPE not found</faultstring>\n    </soap:Fault>\n  </soap:Body>\n</soap:Envelope>",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "invalid SOAPAction",
+          "headers": [
+            {
+              "uuid": "b1111111-1111-1111-1111-111111111111",
+              "key": "Content-Type",
+              "value": "text/xml; charset=utf-8"
+            }
+          ],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "OR",
+          "disableTemplating": true,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    }
+  ],
+  "rootChildren": [
+    {
+      "type": "route",
+      "uuid": "a3333333-3333-3333-3333-333333333333"
+    }
+  ]
+}

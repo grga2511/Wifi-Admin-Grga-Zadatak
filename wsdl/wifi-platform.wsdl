@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://wifi-admin.local/platform/v1"
+    targetNamespace="http://wifi-admin.local/platform/v1"
+    name="WifiPlatformService">
+
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://wifi-admin.local/platform/v1" elementFormDefault="qualified">
+
+      <xsd:simpleType name="WifiBandType">
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="BAND_2_4_GHZ"/>
+          <xsd:enumeration value="BAND_5_GHZ"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+
+      <xsd:simpleType name="EncryptionType">
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="OPEN"/>
+          <xsd:enumeration value="WEP"/>
+          <xsd:enumeration value="WPA_PSK"/>
+          <xsd:enumeration value="WPA2_PSK"/>
+          <xsd:enumeration value="WPA3_SAE"/>
+          <xsd:enumeration value="WPA2_ENTERPRISE"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+
+      <xsd:complexType name="WifiConfigurationType">
+        <xsd:sequence>
+          <xsd:element name="cpeId" type="xsd:string"/>
+          <xsd:element name="wifiBand" type="tns:WifiBandType"/>
+          <xsd:element name="ssid" type="xsd:string"/>
+          <xsd:element name="encryptionType" type="tns:EncryptionType" minOccurs="0"/>
+          <xsd:element name="password" type="xsd:string" minOccurs="0"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:element name="GetCpeIdRequest">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="cpeId" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="GetCpeIdResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="configuration" type="tns:WifiConfigurationType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="UpdateCpeIdRequest">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="configuration" type="tns:WifiConfigurationType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="UpdateCpeIdResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="configuration" type="tns:WifiConfigurationType"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+    </xsd:schema>
+  </wsdl:types>
+
+  <wsdl:message name="GetCpeIdRequestMessage">
+    <wsdl:part name="parameters" element="tns:GetCpeIdRequest"/>
+  </wsdl:message>
+  <wsdl:message name="GetCpeIdResponseMessage">
+    <wsdl:part name="parameters" element="tns:GetCpeIdResponse"/>
+  </wsdl:message>
+  <wsdl:message name="UpdateCpeIdRequestMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCpeIdRequest"/>
+  </wsdl:message>
+  <wsdl:message name="UpdateCpeIdResponseMessage">
+    <wsdl:part name="parameters" element="tns:UpdateCpeIdResponse"/>
+  </wsdl:message>
+
+  <wsdl:portType name="WifiPlatformPortType">
+    <wsdl:operation name="getCpeID">
+      <wsdl:input message="tns:GetCpeIdRequestMessage"/>
+      <wsdl:output message="tns:GetCpeIdResponseMessage"/>
+    </wsdl:operation>
+    <wsdl:operation name="updateCpeId">
+      <wsdl:input message="tns:UpdateCpeIdRequestMessage"/>
+      <wsdl:output message="tns:UpdateCpeIdResponseMessage"/>
+    </wsdl:operation>
+  </wsdl:portType>
+
+  <wsdl:binding name="WifiPlatformSoapBinding" type="tns:WifiPlatformPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="getCpeID">
+      <soap:operation soapAction="http://wifi-admin.local/platform/v1#getCpeID" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="updateCpeId">
+      <soap:operation soapAction="http://wifi-admin.local/platform/v1#updateCpeId" style="document"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="WifiPlatformService">
+    <wsdl:port name="WifiPlatformPort" binding="tns:WifiPlatformSoapBinding">
+      <!-- Iz Docker hosta: http://localhost:8080/platform -->
+      <!-- Iz drugog kontejnera u istoj mreži: http://platform-mock:3000/platform -->
+      <soap:address location="http://localhost:8080/platform"/>
+    </wsdl:port>
+  </wsdl:service>
+
+</wsdl:definitions>

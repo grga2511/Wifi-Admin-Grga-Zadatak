@@ -1,0 +1,144 @@
+openapi: 3.0.3
+info:
+  title: WiFi Admin API
+  description: >
+    REST API koji omogućuje dohvat i promjenu tipa enkripcije, naziva i šifre WiFi mreže.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8081
+    description: Primjer — URL servisa
+
+tags:
+  - name: WiFi
+    description: WiFi parametri CPE uređaja
+
+paths:
+  /wifi-parameter/{cpeId}:
+    get:
+      tags: [WiFi]
+      summary: Dohvati WiFi parametre za CPE
+      operationId: getWifiParameter
+      parameters:
+        - name: cpeId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Identifikator CPE uređaja (mora postojati na platformi).
+      responses:
+        '200':
+          description: WiFi konfiguracija
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WifiConfiguration'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+  /wifi-parameter:
+    put:
+      tags: [WiFi]
+      summary: Ažuriraj WiFi parametre CPE-a
+      operationId: putWifiParameter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WifiConfiguration'
+      responses:
+        '200':
+          description: Potvrđena konfiguracija (isti model kao zahtjev)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WifiConfiguration'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          description: CPE s danim cpeId ne postoji na platformi
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+components:
+  schemas:
+    WifiBand:
+      type: string
+      enum:
+        - BAND_2_4_GHZ
+        - BAND_5_GHZ
+      description: WiFi frekvencijski pojas.
+
+    EncryptionType:
+      type: string
+      enum:
+        - OPEN
+        - WEP
+        - WPA_PSK
+        - WPA2_PSK
+        - WPA3_SAE
+        - WPA2_ENTERPRISE
+      description: Način šifriranja bežične mreže.
+
+    WifiConfiguration:
+      type: object
+      required:
+        - cpeId
+        - wifiBand
+        - ssid
+      properties:
+        cpeId:
+          type: string
+          description: Identifikator CPE uređaja.
+        wifiBand:
+          $ref: '#/components/schemas/WifiBand'
+        ssid:
+          type: string
+          description: Naziv bežične mreže (SSID).
+        encryptionType:
+          $ref: '#/components/schemas/EncryptionType'
+          description: >
+            Opcionalno. Ako je izostavljeno, podrazumijeva se OPEN.
+        password:
+          type: string
+          nullable: true
+          description: >
+            Opcionalno; očekivano kada šifriranje zahtijeva lozinku (npr. WPA2_PSK).
+            Za OPEN obično nije potrebno.
+
+    ErrorBody:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Nevažeći ulaz (npr. nedostaje lozinka uz WPA2_PSK).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorBody'
+    NotFound:
+      description: Nepoznat cpeId na platformi.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorBody'
+    BadGateway:
+      description: Greška pri komunikaciji s vanjskom SOAP platformom (timeout, fault, itd.).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorBody'
